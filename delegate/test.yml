@@ -1,0 +1,14 @@
+- name: "play to test delegate_to fonction"
+  hosts: all
+  become: true
+  serial: 2
+  tasks:
+    - name: register of all hosts on master
+      command: "sh -c 'echo {{ ansible_host }} {{ inventory_hostname }} >> /etc/hosts'"
+      tags: name
+      delegate_to: localhost
+
+    - name: "test var "
+      debug:
+        var: ansible_play_hosts
+
