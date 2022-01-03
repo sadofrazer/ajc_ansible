@@ -1,0 +1,78 @@
+---
+- name: attribute hostname on amster
+  hosts: all
+  vars_files:
+    - /home/ubuntu/2webapp/files/secrets.yml
+  become: true
+  tasks:
+    - name: set host name
+      command: "sudo hostnamectl set-hostname {{ hostname }}"
+
+    - name: edit the hosts file
+      command: "echo '127.0.0.1 {{ hostname }}' >> /etc/hosts"
+
+
+- name: "Deploy an webapp in prod env"
+  hosts: prod
+  vars_files:
+    - /home/ubuntu/2webapp/files/secrets.yml
+  become: true
+  vars:
+    ansible_sudo_pass: admin
+
+  pre_tasks:
+    - name: Download Install docker script
+      get_url:
+        url: "https://get.docker.com"
+        dest: /home/ubuntu/get-docker.sh
+
+    - name: run script to install docker
+      command: "sh /home/ubuntu/get-docker.sh"
+
+    - name: give the privilège to ubuntu
+      user:
+        name: ubuntu
+        append: yes
+        groups: 
+          - docker
+
+    - name: install python-pip
+      package:
+        name: python3-pip
+        state: present
+
+    - name: install docker-py
+      pip:
+        name: docker-py
+        state: present
+
+    - name: create web_files Dir on remote hosts
+      file:
+        path: /home/ubuntu/web_files
+        state: directory
+
+  tasks:
+    - name: copy website files
+      git:
+        repo: https://github.com/diranetafen/static-website-example.git
+        dest: /home/ubuntu/web_files
+        force: yes
+
+    - name: "delete index.html if exist"
+      file:
+        path: /home/ubuntu/web_files/index.html
+        state: absent
+     
+    - name: copy index file
+      template:
+        src: index.html.j2
+        dest: /home/ubuntu/web_files/index.html
+
+    - name: deploy nginx container
+      docker_container:
+        name: webapp-httpd
+        image: httpd
+        ports:
+          - "8080:80"
+        volumes:
+          - /home/ubuntu/web_files/:/usr/local/apache2/htdocs/

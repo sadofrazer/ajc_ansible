@@ -1,0 +1,46 @@
+---
+- name: "Install nginx and git "
+  hosts: prod
+  become: true
+  vars:
+    app: nginx
+  vars_files:
+#    - /home/ubuntu/nginx/env.yml
+
+  tasks:
+    - name: "Install nginx"
+      apt: 
+        name: "{{ item }}"
+        state: present
+      when: ansible_distribution == "Ubuntu" and env == "worker01"
+      loop:
+        - nginx
+        - git
+
+    - name: "start nginx"
+      service:
+        name: nginx
+        enabled: yes
+        state: started
+
+    - name: create index file for nginx
+      copy:
+        dest: /var/www/html/index.html
+        content: "Bonjour AJC de la part de Frazer"
+
+- name: "Desinstall nginx"
+  hosts: worker02
+  become: true
+  vars:
+    app: nginx
+  vars_files:
+    - /home/ubuntu/nginx/env.yml
+
+  tasks:
+    - name: "desinstall nginx"
+      when: ansible_distribution == "Ubuntu"
+      apt:
+        name: nginx
+        state: absent
+        purge: yes
+        autoremove: yes

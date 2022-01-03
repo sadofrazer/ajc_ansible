@@ -1,0 +1,14 @@
+---
+- name: "Install docker"
+  hosts: prod
+  become: true
+  vars:
+    ansible_sudo_pass: ubuntu
+
+  tasks:
+    - name: "create container mario"
+      docker_container:
+        name: mario
+        image: pengbai/docker-supermario
+        ports:
+          - "8080:8080"

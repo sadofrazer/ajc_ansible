@@ -1,0 +1,6 @@
+---
+- name: "Install docker"
+  import_playbook: /home/ubuntu/mario/docker.yml
+
+- name: "Deploy a mario container"
+  import_playbook: /home/ubuntu/mario/mario.yml

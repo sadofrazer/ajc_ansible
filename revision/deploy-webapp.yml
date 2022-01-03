@@ -1,0 +1,8 @@
+- name: "change the name of hosts"
+  import_playbook: hostname.yml
+
+- name: "install docker with prerequistes"
+  import_playbook: docker.yml
+
+- name: "deploy webapp"
+  import_playbook: webapp.yml

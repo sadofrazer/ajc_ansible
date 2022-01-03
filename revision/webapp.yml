@@ -1,0 +1,30 @@
+---
+- name: "deploy a webapp"
+  hosts: prod
+  vars_files: secrets.yml
+  tasks:
+    - name: "create a web_files Directory on remote host"
+      file:
+        path: /home/ubuntu/web_files
+        state: directory
+
+    - name: git clone the app files
+      git:
+        repo: https://github.com/diranetafen/static-website-example.git
+        dest: /home/ubuntu/web_files/
+        force: yes
+    
+    - name: "copy index.html tempalte on remote host"
+      template:
+        src: "index.html.j2"
+        dest: /home/ubuntu/web_files/index.html
+
+    - name: "create container"
+      tags: container
+      docker_container:
+        name: nginx
+        image: nginx
+        ports:
+          - "8080:80"
+        volumes:
+          - "/home/ubuntu/web_files/:/usr/share/nginx/html/"

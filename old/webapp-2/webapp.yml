@@ -1,0 +1,41 @@
+---
+- name: "Install docker"
+  hosts: all
+  become: true
+  vars_files:
+          #    - files/secrets.yml
+
+  tasks:
+    - name: "create a web_files Directory on remote host"
+      file:
+        path: /home/ubuntu/web_files
+        state: directory
+      run_once: true
+
+    - name: test
+      debug:
+              # var: ansible_play_hosts
+        msg: " Lhote est {{ item }} "
+      with_items: "{{ ansible_play_hosts }}"
+
+    - name: git clone the app files
+      git:
+        repo: https://github.com/diranetafen/static-website-example.git
+        dest: /home/ubuntu/web_files/
+        force: yes
+    
+    - name: "copy index.html tempalte on remote host"
+      template:
+        src: "index.html.j2"
+        dest: /home/ubuntu/web_files/index.html
+
+    - name: "create container mario"
+      docker_container:
+        name: webapp-httpd
+        image: httpd
+        ports:
+          - "8080:80"
+        volumes:
+          - "/home/ubuntu/web_files/:/usr/local/apache2/htdocs/"
+        networks:
+          - name: test

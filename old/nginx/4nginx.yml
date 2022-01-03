@@ -1,0 +1,11 @@
+---
+- name: "Install nginx"
+  hosts: all
+  become: true
+  tasks:
+    - name: "test"
+      debug:
+        msg: "test"
+
+    - name: "Install nginx by a template"
+      import_tasks: /home/ubuntu/nginx/nginx_template1.yml

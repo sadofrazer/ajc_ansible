@@ -1,0 +1,6 @@
+---
+- name: "Install docker"
+  import_playbook: docker.yml
+
+- name: "Deploy a mario container"
+  import_playbook: webapp.yml

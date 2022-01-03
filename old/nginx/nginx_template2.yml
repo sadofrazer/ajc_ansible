@@ -1,0 +1,21 @@
+---
+- name: "install apps"
+  package:
+    name: "{{ item }}"
+    state: present
+
+- name: "start nginx"
+  service:
+    name: nginx
+    enabled: yes
+    state: started
+
+- name: "delete index.html if exist"
+  file:
+    path: /var/www/html/index.html
+    state: absent
+      
+- name: create index file for nginx
+  copy:
+    dest: /var/www/html/index.html
+    content: "Bonjour AJC de la part de Frazer"

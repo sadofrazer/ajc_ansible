@@ -1,0 +1,15 @@
+---
+- name: "test template"
+  hosts: prod
+  vars_files:
+    - secrets.yml
+  vars:
+    env: prod
+  tasks:
+    - name: "templating"
+      template:
+        src: "frazer.txt.j2"
+        dest: "/home/{{ ansible_user }}/frazer.txt"
+    - name: test
+      debug:
+        msg: "{{ ansible_user_dir }}"

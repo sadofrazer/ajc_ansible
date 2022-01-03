@@ -1,0 +1,13 @@
+- name "add all host in /etc/hosts of master"
+  command: "echo '{{ ansible_host }}  {{ inventory_hostname }}' > /etc/hosts"
+  run_once: true
+  delegate_to: worker01
+  when: inventory_hostname == ansible_play_hosts[0]
+
+
+
+
+  
+
+
+

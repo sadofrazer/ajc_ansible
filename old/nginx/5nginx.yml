@@ -1,0 +1,15 @@
+---
+- name: "Install nginx"
+  hosts: all
+  become: true
+  tasks:
+    - name: "test"
+      debug:
+        msg: "test"
+
+    - name: "Install nginx by a template"
+      include_tasks: /home/ubuntu/nginx/nginx_template2.yml
+      when: ansible_distribution == "Ubuntu"
+      loop:
+        - git
+        - nginx
