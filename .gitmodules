@@ -1,0 +1,3 @@
+[submodule "deploy_odoo/roles/odoo"]
+	path = deploy_odoo/roles/odoo
+	url = https://github.com/sadofrazer/odoo_role.git

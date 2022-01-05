@@ -1,0 +1,5 @@
+- name: "deploy odoo with a role"
+  hosts: worker01
+  become: true
+  roles:
+    - sadofrazer.odoo_role
